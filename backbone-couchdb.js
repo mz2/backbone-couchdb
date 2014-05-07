@@ -69,7 +69,7 @@ backbone-couchdb.js is licensed under the MIT license.
       make_db: function(objConfig) {
         var db;
 
-        if (objConfig.base_url) {
+        if (objConfig && objConfig.base_url) {
           db = $.couch.db(objConfig.db_name);
           db.uri = "" + objConfig.base_url + "/" + objConfig.db_name + "/";
         }
