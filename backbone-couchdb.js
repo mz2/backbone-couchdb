@@ -8,6 +8,7 @@ backbone-couchdb.js is licensed under the MIT license.
 
 
 (function() {
+  console.log("Loading backbone couch connector...");
   var con,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -141,7 +142,7 @@ backbone-couchdb.js is licensed under the MIT license.
           return opts.complete(res);
         }
       };
-      view_options = ["key", "keys", "startkey", "startkey_docid", "local_filter", "endkey", "endkey_docid", "limit", "stale", "descending", "skip", "group", "group_level", "reduce", "include_docs", "inclusive_end", "update_seq"];
+      view_options = ["key", "keys", "startkey", "startkey_docid", "local_filter", "collection_name", "endkey", "endkey_docid", "limit", "stale", "descending", "skip", "group", "group_level", "reduce", "include_docs", "inclusive_end", "update_seq"];
       for (_i = 0, _len = view_options.length; _i < _len; _i++) {
         option = view_options[_i];
         if (opts[option] != null) {
@@ -343,6 +344,7 @@ backbone-couchdb.js is licensed under the MIT license.
     };
 
     Collection.prototype.listen_to_changes = function() {
+        console.log("Listen to changes");
       if (!this._db_changes_enabled) {
         this._db_changes_enabled = true;
         if (con.config.single_feed) {
