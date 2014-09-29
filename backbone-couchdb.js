@@ -14,6 +14,7 @@ backbone-couchdb.js is licensed under the MIT license.
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
+
   Backbone.couch_connector = con = {
     config: {
       db_name: "backbone_connect",
@@ -69,15 +70,17 @@ backbone-couchdb.js is licensed under the MIT license.
       },
       make_db: function(objConfig) {
         var db;
-
+        
         if (objConfig && objConfig.base_url) {
           db = $.couch.db(objConfig.db_name);
-          db.uri = "" + objConfig.base_url + "/" + objConfig.db_name + "/";
+          var base_url = (typeof objConfig.base_url === "function") ? objConfig.base_url() : objConfig.base_url;
+          db.uri = "" + base_url + "/" + objConfig.db_name + "/";
         }
         else {
           db = $.couch.db(con.config.db_name);
-          if (con.config.base_url != null) {
-            db.uri = "" + con.config.base_url + "/" + con.config.db_name + "/";
+          if (con.config.base_url) {
+            var base_url = (typeof con.config.base_url === "function") ? con.config.base_url() : con.config.base_url;
+            db.uri = "" + base_url + "/" + con.config.db_name + "/";
           }
         }
         return db;
