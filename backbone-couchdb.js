@@ -70,7 +70,7 @@ backbone-couchdb.js is licensed under the MIT license.
       },
       make_db: function(objConfig) {
         var db;
-        
+
         if (objConfig && objConfig.base_url) {
           db = $.couch.db(objConfig.db_name);
           var base_url = (typeof objConfig.base_url === "function") ? objConfig.base_url() : objConfig.base_url;
@@ -407,7 +407,7 @@ backbone-couchdb.js is licensed under the MIT license.
             _results.push(this.remove(obj));
           } else {
             if (obj.get("_rev") !== _doc.doc._rev) {
-              _results.push(obj.set(_doc.doc));
+              _results.push(obj.set(_doc.doc, {externalChange:true}));
             } else {
               _results.push(void 0);
             }
