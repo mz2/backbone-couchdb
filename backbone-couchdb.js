@@ -8,7 +8,6 @@ backbone-couchdb.js is licensed under the MIT license.
 
 
 (function() {
-  console.log("Loading backbone couch connector...");
   var con,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -347,7 +346,6 @@ backbone-couchdb.js is licensed under the MIT license.
     };
 
     Collection.prototype.listen_to_changes = function() {
-        console.log("Listen to changes");
       if (!this._db_changes_enabled) {
         this._db_changes_enabled = true;
         if (con.config.single_feed) {
