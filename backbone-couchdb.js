@@ -101,7 +101,7 @@ backbone-couchdb.js is licensed under the MIT license.
       keys = [this.helpers.extract_collection_name(coll)];
       if (coll.db != null) {
         if (coll.db.changes || this.config.global_changes) {
-          coll.listen_to_changes(coll);
+          coll.listen_to_changes();
         }
         if (coll.db.view != null) {
           _view = coll.db.view;
@@ -341,21 +341,42 @@ backbone-couchdb.js is licensed under the MIT license.
 
     Collection.prototype.initialize = function() {
       if (!this._db_changes_enabled && ((this.db && this.db.changes) || con.config.global_changes)) {
-        return this.listen_to_changes(this.db);
+        return this.listen_to_changes();
       }
+      console.debug("Initialized collection '" + this.collection_name + "', with db %o", this.db);      
     };
 
-    Collection.prototype.listen_to_changes = function() {
-      if (!this._db_changes_enabled) {
+    Collection.prototype.listen_to_changes = function(options) {
+      if (!this._db_changes_enabled)
+      {
         this._db_changes_enabled = true;
         if (con.config.single_feed) {
           return this._db_prepared_for_global_changes();
         } else {
-          if (!this._db_inst) {
+          var force = (options && options.remakeDatabase === true);
+            
+          if (force || !this._db_inst)
+          {
+              var oldDB = this._db_inst;
             this._db_inst = con.helpers.make_db(this.db);
+            
+            if (oldDB) {
+                console.debug("Remade new db %o over %o (" + (this._db_inst !== oldDB ? "is actually NEW" : "is the SAME, really") + ") for collection '" + this.collection_name + "'", this._db_inst, oldDB);
+            }
+            else {
+                console.debug("Made new db %o for collection '" + this.collection_name + "'", this._db_inst);
+            }
           }
-          return this._db_inst.info({
-            "success": this._db_prepared_for_changes
+          
+          var databaseURI = (this._db_inst && this._db_inst.uri);
+          console.debug("Will listen to changes on " + databaseURI + " %o", this);
+          
+          return this._db_inst.info(
+          {
+            "success": this._db_prepared_for_changes,
+            "error": function (request, response, options) {
+                console.error("Failed to listen to changes on " + databaseURI + ": %o --> %o (%o)", request, response, options);
+            }
           });
         }
       }
