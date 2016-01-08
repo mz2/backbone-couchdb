@@ -101,7 +101,7 @@ backbone-couchdb.js is licensed under the MIT license.
       keys = [this.helpers.extract_collection_name(coll)];
       if (coll.db != null) {
         if (coll.db.changes || this.config.global_changes) {
-          coll.listen_to_changes(coll);
+          coll.listen_to_changes();
         }
         if (coll.db.view != null) {
           _view = coll.db.view;
@@ -341,8 +341,9 @@ backbone-couchdb.js is licensed under the MIT license.
 
     Collection.prototype.initialize = function() {
       if (!this._db_changes_enabled && ((this.db && this.db.changes) || con.config.global_changes)) {
-        return this.listen_to_changes(this.db);
+        return this.listen_to_changes();
       }
+      //console.debug("Initialized collection '" + this.collection_name + "', with db %o", this.db);      
     };
 
     Collection.prototype.listen_to_changes = function() {
@@ -354,8 +355,16 @@ backbone-couchdb.js is licensed under the MIT license.
           if (!this._db_inst) {
             this._db_inst = con.helpers.make_db(this.db);
           }
-          return this._db_inst.info({
-            "success": this._db_prepared_for_changes
+          
+          var databaseURI = (this._db_inst && this._db_inst.uri);
+          //console.debug("Will listen to changes on " + databaseURI + " %o", this);
+          
+          return this._db_inst.info(
+          {
+            "success": this._db_prepared_for_changes,
+            "error": function (request, response, options) {
+                console.error("Failed to listen to changes on " + databaseURI + ": %o --> %o (%o)", request, response, options);
+            }
           });
         }
       }
